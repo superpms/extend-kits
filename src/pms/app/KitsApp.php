@@ -13,7 +13,7 @@ trait KitsApp{
         $name = explode("\\",get_called_class());
         $name = array_slice($name,1,2);
         $name = implode("\\",$name);
-        return Path::getRoot("kitsroot\\providers\\".$name.$suffix);
+        return Path::getKitsRoot($name,$suffix);
     }
 
 }

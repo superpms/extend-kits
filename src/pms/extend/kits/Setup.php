@@ -20,21 +20,8 @@ class Setup implements LifecycleInterface
 
     protected static function init(Options $bootOptions): void
     {
-        $kitsDir = path_join(static::$rootPath, $bootOptions->extend?->kits ?? '/kitsroot');
+        $kitsDir = path_join(static::$rootPath, $bootOptions->extend?->kits ?? '/kits');
         Path::mount('kitsRoot', $kitsDir);
-
-        $autoloadPackFile = Path::getKitsRoot('autoload.php');
-        if (is_file($autoloadPackFile)) {
-            $pluginsConfig = include $autoloadPackFile;
-            foreach ($pluginsConfig as $item) {
-                $autoloadFile = Path::getPluginsRoot($item, "/autoload.php");
-                if (is_file($autoloadFile)) {
-                    include_once $autoloadFile;
-                }
-            }
-        } else {
-            file_create($autoloadPackFile, "<?php\r\n // 需要加载 autoload.php 文件的插件名称集合 \r\n return [];");
-        }
     }
 
 }

@@ -2,7 +2,7 @@
 
 namespace pms\extend\kits;
 
-class Installation{
+class Installer{
 
     protected static function getNamespace(string $name, string $file): string|false{
         $name = "$name/$file";
