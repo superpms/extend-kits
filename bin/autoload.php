@@ -1,2 +1,2 @@
 <?php
-\pms\hook\LifecycleHook::mount(\pms\extend\kits\Setup::class);
+\pms\hook\LifecycleHook::mount(LIFECYCLE_BOOT,\pms\extend\kits\Setup::class);
