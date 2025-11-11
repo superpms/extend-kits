@@ -1,5 +1,9 @@
 <?php
+
+use pms\extend\kits\Setup;
+use pms\hook\LifecycleHook;
+
 if (class_exists('\pms\hook\LifecycleHook')) {
-    \pms\hook\LifecycleHook::mount(LIFECYCLE_BOOT, \pms\extend\kits\Setup::class);
+    LifecycleHook::mount(LIFECYCLE_BOOT, Setup::class);
 }
 
