@@ -6,7 +6,7 @@ use pms\facade\Path;
 
 trait KitsApp{
 
-    final protected static function path($suffix = null): string{
+    final protected static function path(?string $suffix = null): string{
         if(!empty($suffix) && !str_starts_with($suffix,"/")){
             $suffix = "/".$suffix;
         }
