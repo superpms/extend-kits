@@ -23,5 +23,15 @@
     },
     "require-dev": {
         "superpms/basic": "^1.0.0"
+    },
+    "extra": {
+        "pms": {
+            "dir": [
+                "/kits"
+            ],
+            "copy": {
+                "/kits/kit.json": "/resource/kit.json"
+            }
+        }
     }
 }

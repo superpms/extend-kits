@@ -13,7 +13,6 @@ class Setup implements LifecycleInterface
 
     public static function entry(string $rootPath): void
 	{
-
         static::$rootPath = $rootPath;
         static::init();
     }
