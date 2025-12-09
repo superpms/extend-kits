@@ -69,9 +69,8 @@ class KitsRegistryCenter
                 $viewPath = Path::getKitsRoot($name, $kit->view);
                 $view = json_decode(file_get_contents($viewPath), true);
             }
-            $sourceArr = $kit->toArray();
             $list[] = [
-                ...$sourceArr,
+                ...$kit->toArray(),
                 'icon' => $kit->icon !== null ? '/kits/' . $name . '/' . $kit->icon : null,
                 'view' => $view,
             ];
