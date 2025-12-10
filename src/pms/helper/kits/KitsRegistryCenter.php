@@ -80,13 +80,12 @@ class KitsRegistryCenter
 
     public static function getDbConfig(string $kitName)
     {
-        $path = Path::getKitsRoot($kitName, 'kit.json');
-        if (!file_exists($path)) {
+        $kit = static::useLocalKit($kitName);
+        if($kit === null){
             return [];
         }
-        $kit = static::useKitsFile($path);
-        $dbFile = Path::getKitsRoot($kitName, $kit->use_db_config);
-        if (!file_exists($dbFile)) {
+        $dbFile = Path::getKitsRoot($kitName, $kit->config_db);
+        if (!is_file($dbFile)) {
             return [];
         }
         return json_decode(file_get_contents($dbFile), true);
