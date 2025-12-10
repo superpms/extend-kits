@@ -42,12 +42,20 @@ class KitFileResource extends KitsResource
 
     public function setExtra(string $key, mixed $value): static
     {
-        if (empty($root->extra)) {
+        if (empty($this->extra)) {
             $this->extra = [];
         }
         $this->extra[$key] = $value;
         return $this;
     }
+
+    public function getExtra(string $key, mixed $default = null): mixed{
+        if (empty($this->extra)) {
+            $this->extra = [];
+        }
+        return $this->extra[$key] ?? $default;
+    }
+
 
     public function save(): bool|int
     {
