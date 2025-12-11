@@ -4,7 +4,7 @@ namespace pms\program\kits;
 
 use pms\OptionsAccess;
 
-class KitsResource extends OptionsAccess
+class KitFile extends OptionsAccess
 {
 
     /**

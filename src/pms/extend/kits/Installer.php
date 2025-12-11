@@ -2,6 +2,9 @@
 
 namespace pms\extend\kits;
 
+/**
+ * @deprecated 已废弃
+ */
 class Installer{
 
     protected static function getNamespace(string $name, string $file): string|false{

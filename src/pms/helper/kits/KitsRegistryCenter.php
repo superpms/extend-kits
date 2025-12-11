@@ -3,7 +3,7 @@
 namespace pms\helper\kits;
 
 use pms\facade\Path;
-use pms\program\kits\KitFileResource;
+use pms\program\kits\KitFileSource;
 
 class KitsRegistryCenter
 {
@@ -28,7 +28,7 @@ class KitsRegistryCenter
     }
 
 
-    public static function useLocalKitFile(...$paths): ?KitFileResource{
+    public static function useLocalKitFile(...$paths): ?KitFileSource{
         $path = Path::getKitsRoot(...$paths);
         if (!file_exists($path)) {
             return null;
@@ -37,7 +37,7 @@ class KitsRegistryCenter
         return static::useKitsFile($info,$path);
     }
 
-    public static function useLocalKit(string $name): ?KitFileResource
+    public static function useLocalKit(string $name): ?KitFileSource
     {
         return static::useLocalKitFile($name,'kit.json');
     }
@@ -59,7 +59,7 @@ class KitsRegistryCenter
     }
 
 
-    public static function listInfo(): array{
+    public static function loaclListInfo(): array{
         $root = static::useLocalKitFile('kit.json');
         $list = [];
         foreach ($root->require as $name => $version) {
@@ -79,25 +79,25 @@ class KitsRegistryCenter
     }
 
     /**
-     * @return KitFileResource[]
+     * @return KitFileSource[]
      */
-    public static function list(): array
+    public static function localList(): array
     {
         $root = static::useLocalKitFile('kit.json');
         $kits = [];
         foreach ($root->require as $name => $version){
             $kit = static::useLocalKit($name);
             if($kit !== null){
-                $kits[] = static::useLocalKit($name);
+                $kits[] = $kit;
             }
         }
         return $kits;
     }
 
 
-    public static function useKitsFile(array $info, string $path = ''): KitFileResource
+    public static function useKitsFile(array $info, string $path = ''): KitFileSource
     {
-        return new KitFileResource($info, $path);
+        return new KitFileSource($info, $path);
     }
 
 }
