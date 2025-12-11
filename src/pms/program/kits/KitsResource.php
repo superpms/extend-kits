@@ -15,9 +15,10 @@ class KitsResource extends OptionsAccess
     protected function get(string $name, mixed $default = null): mixed
     {
         if (!isset($this->data[$name])) {
-            return null;
+            $data = $default;
+        }else{
+            $data = &$this->data[$name];
         }
-        $data = &$this->data[$name];
         if (is_array($data)) {
             $data = (new self())->restore($data);
         }

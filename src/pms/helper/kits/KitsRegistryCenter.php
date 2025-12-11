@@ -59,7 +59,7 @@ class KitsRegistryCenter
     }
 
 
-    public static function list(): array{
+    public static function listInfo(): array{
         $root = static::useLocalKitFile('kit.json');
         $list = [];
         foreach ($root->require as $name => $version) {
@@ -78,18 +78,22 @@ class KitsRegistryCenter
         return $list;
     }
 
-    public static function getDbConfig(string $kitName)
+    /**
+     * @return KitFileResource[]
+     */
+    public static function list(): array
     {
-        $kit = static::useLocalKit($kitName);
-        if($kit === null){
-            return [];
+        $root = static::useLocalKitFile('kit.json');
+        $kits = [];
+        foreach ($root->require as $name => $version){
+            $kit = static::useLocalKit($name);
+            if($kit !== null){
+                $kits[] = static::useLocalKit($name);
+            }
         }
-        $dbFile = Path::getKitsRoot($kitName, $kit->config_db);
-        if (!is_file($dbFile)) {
-            return [];
-        }
-        return json_decode(file_get_contents($dbFile), true);
+        return $kits;
     }
+
 
     public static function useKitsFile(array $info, string $path = ''): KitFileResource
     {
