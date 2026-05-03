@@ -19,21 +19,36 @@ class KitsRegistryCenter
 
     public static function setRegistry(string $registry): bool|int
     {
-        $root = static::useLocalKitFile('kit.json');
-        if($root === null){
+        $path = Path::getKitsRoot('kit.json');
+        if (!is_string($path) || !is_file($path)) {
             return false;
         }
-        $root->registry = $registry;
-        return $root->save();
+        $content = file_get_contents($path);
+        if ($content === false) {
+            return false;
+        }
+        $info = json_decode($content, true);
+        if (json_last_error() !== JSON_ERROR_NONE || !is_array($info)) {
+            return false;
+        }
+        $info['registry'] = $registry;
+        return save_json_config($path, $info);
     }
 
 
     public static function useLocalKitFile(...$paths): ?KitFileSource{
         $path = Path::getKitsRoot(...$paths);
-        if (!file_exists($path)) {
+        if (!is_string($path) || !is_file($path)) {
             return null;
         }
-        $info = json_decode(file_get_contents($path), true);
+        $content = file_get_contents($path);
+        if ($content === false) {
+            return null;
+        }
+        $info = json_decode($content, true);
+        if (json_last_error() !== JSON_ERROR_NONE || !is_array($info)) {
+            return null;
+        }
         return static::useKitsFile($info,$path);
     }
 
@@ -42,32 +57,39 @@ class KitsRegistryCenter
         return static::useLocalKitFile($name,'kit.json');
     }
 
-    public static function getExtra(string $name, ?string $key = null): ?array
+    public static function getExtra(string $name, ?string $key = null): mixed
     {
-        $path = Path::getKitsRoot($name, 'kit.json');
-        if (!file_exists($path)) {
-            return null;
-        }
-        $root = static::useKitsFile($path);
-        if (empty($root->extra) || !is_array($root->extra)) {
+        $kit = static::useLocalKit($name);
+        if ($kit === null) {
             return null;
         }
         if ($key === null) {
-            return $root->extra;
+            return $kit->getExtra();
         }
-        return $root->extra[$name] ?? null;
+        return $kit->getExtra($key);
     }
 
 
-    public static function loaclListInfo(): array{
+    public static function localListInfo(): array{
         $root = static::useLocalKitFile('kit.json');
         $list = [];
+        if($root === null){
+            return $list;
+        }
+        if (!is_iterable($root->require)) {
+            return $list;
+        }
         foreach ($root->require as $name => $version) {
             $kit = static::useLocalKit($name);
+            if($kit === null){
+                continue;
+            }
             $view = null;
             if (!empty($kit->view)) {
                 $viewPath = Path::getKitsRoot($name, $kit->view);
-                $view = json_decode(file_get_contents($viewPath), true);
+                if (is_file($viewPath)) {
+                    $view = load_json_config($viewPath);
+                }
             }
             $list[] = [
                 ...$kit->toArray(),
@@ -85,6 +107,12 @@ class KitsRegistryCenter
     {
         $root = static::useLocalKitFile('kit.json');
         $kits = [];
+        if($root === null){
+            return $kits;
+        }
+        if (!is_iterable($root->require)) {
+            return $kits;
+        }
         foreach ($root->require as $name => $version){
             $kit = static::useLocalKit($name);
             if($kit !== null){

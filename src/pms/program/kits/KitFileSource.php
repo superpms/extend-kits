@@ -17,6 +17,7 @@ use pms\program\kits\contract\KitNodeManageInterface;
  * @property string|null                   $version                                                      包版本
  * @property string                        $author                                                       包作者
  * @property array                         $require                                                      依赖子包
+ * @property array                         $services                                                     套件服务声明
  * @property KitNodeManageInterface|null   $manage                                                       配置项-管理端
  * @property KitNodeCustomerInterface|null $customer                                                     配置项-客户端(此项非null时方可允许客户端进行安装/使用)
  * @property bool                          $system                                                       是否为系统套件(系统套件不支持卸载)
@@ -36,56 +37,91 @@ class KitFileSource extends KitFile
         $this->kit_file_path = $path;
         parent::__construct(false);
 
-        $this->name = $info['name'] ?? null;
-        $this->root = $info['root'] ?? false;
-        $this->registry = $info['registry'] ?? null;
-        $this->registry_env = $info['registry_env'] ?? 'project';
-        $this->icon = $info['icon'] ?? null;
-        $this->description = $info['description'] ?? null;
-        $this->remarks = $info['remarks'] ?? null;
-        $this->version = $info['version'] ?? null;
-        $this->author = $info['author'] ?? null;
-        $this->require = $info['require'] ?? [];
+        $this->name = static::stringOrNull($info['name'] ?? null);
+        $this->root = static::boolValue($info['root'] ?? false);
+        $this->registry = static::stringOrNull($info['registry'] ?? null);
+        $this->registry_env = static::stringValue($info['registry_env'] ?? 'project', 'project');
+        $this->icon = static::stringOrNull($info['icon'] ?? null);
+        $this->description = static::stringOrNull($info['description'] ?? null);
+        $this->remarks = static::stringOrNull($info['remarks'] ?? null);
+        $this->version = static::stringOrNull($info['version'] ?? null);
+        $this->author = static::stringOrNull($info['author'] ?? null);
+        $this->require = isset($info['require']) && is_array($info['require']) ? $info['require'] : [];
+        $this->services = isset($info['services']) && is_array($info['services']) ? $info['services'] : [];
 
         $this->manage = null;
         if (array_key_exists('manage', $info)) {
             $manage = $info['manage'];
-            if ($manage !== null) {
+            if (is_array($manage)) {
                 $this->manage = [];
                 if (array_key_exists('cfg_sql', $manage)) {
-                    $this->manage['cfg_sql'] = $manage['cfg_sql'] ?? '';
+                    $this->manage['cfg_sql'] = static::stringValue($manage['cfg_sql'] ?? '');
                 }
                 if (array_key_exists('cfg_db', $manage)) {
-                    $this->manage['cfg_db'] = $manage['cfg_db'] ?? '';
+                    $this->manage['cfg_db'] = static::stringValue($manage['cfg_db'] ?? '');
                 }
                 if (array_key_exists('cfg_file', $manage)) {
-                    $this->manage['cfg_file'] = $manage['cfg_file'] ?? '';
+                    $this->manage['cfg_file'] = static::stringValue($manage['cfg_file'] ?? '');
                 }
                 if (array_key_exists('cfg_pages', $manage)) {
-                    $this->manage['cfg_pages'] = $manage['cfg_pages'] ?? '';
+                    $this->manage['cfg_pages'] = static::stringValue($manage['cfg_pages'] ?? '');
+                }
+                if (array_key_exists('autoinstall', $manage)) {
+                    $this->manage['autoinstall'] = static::boolValue($manage['autoinstall'] ?? false);
+                }
+                if (array_key_exists('install', $manage)) {
+                    $this->manage['install'] = is_array($manage['install']) ? $manage['install'] : [];
                 }
             }
         }
         $this->customer = null;
         if (array_key_exists('customer', $info)) {
             $customer = $info['customer'];
-            if ($customer !== null) {
+            if (is_array($customer)) {
                 $this->customer = [];
                 if (array_key_exists('autoinstall', $customer)) {
-                    $this->customer['autoinstall'] = $customer['autoinstall'] ?? false;
+                    $this->customer['autoinstall'] = static::boolValue($customer['autoinstall'] ?? false);
                 }
                 if (array_key_exists('cfg_db', $customer)) {
-                    $this->customer['cfg_db'] = $customer['cfg_db'] ?? '';
+                    $this->customer['cfg_db'] = static::stringValue($customer['cfg_db'] ?? '');
                 }
                 if (array_key_exists('cfg_pages', $customer)) {
-                    $this->customer['cfg_pages'] = $customer['cfg_pages'] ?? '';
+                    $this->customer['cfg_pages'] = static::stringValue($customer['cfg_pages'] ?? '');
                 }
             }
 
         }
 
-        $this->system = array_key_exists('system', $info) ? $info['system'] : false;
-        $this->private = array_key_exists('private', $info) ? $info['private'] : false;
+        $this->system = static::boolValue($info['system'] ?? false);
+        $this->private = static::boolValue($info['private'] ?? false);
+    }
+
+    protected static function stringOrNull(mixed $value): ?string
+    {
+        return is_string($value) ? $value : null;
+    }
+
+    protected static function stringValue(mixed $value, string $default = ''): string
+    {
+        return is_string($value) ? $value : $default;
+    }
+
+    protected static function boolValue(mixed $value): bool
+    {
+        return is_bool($value) ? $value : false;
+    }
+
+    public function getService(?string $key = null): array
+    {
+        $services = $this->toArray()['services'] ?? [];
+        if (!is_array($services)) {
+            return [];
+        }
+        if ($key === null) {
+            return $services;
+        }
+        $service = $services[$key] ?? [];
+        return is_array($service) ? $service : [];
     }
 
 
@@ -98,8 +134,8 @@ class KitFileSource extends KitFile
     {
         if ($this->extra === null) {
             $data = [];
-            $path = Path::getKitsRoot($this->name, 'kit.extra.json');
-            if (is_file($path)) {
+            $path = $this->name !== null ? Path::getKitsRoot($this->name, 'kit.extra.json') : null;
+            if (is_string($path) && is_file($path)) {
                 $data = load_json_config($path);
             }
             $p = new parent();
@@ -138,7 +174,7 @@ class KitFileSource extends KitFile
     public function save(): bool|int
     {
         $status = [];
-        if ($this->extra !== null) {
+        if ($this->extra !== null && $this->name !== null) {
             $path = Path::getKitsRoot($this->name, 'kit.extra.json');
             $status[] = save_json_config($path, $this->extra);
         }
@@ -219,7 +255,7 @@ class KitFileSource extends KitFile
 
     public function getManageCfgDbVersion()
     {
-        return $this->mountManageCfgDb()->manage_cfg_db['version'] ?? null;
+        return $this->mountManageCfgDb()->manage_cfg_db['version'] ?? $this->manage_cfg_db['registry'] ?? null;
     }
 
 
@@ -263,7 +299,46 @@ class KitFileSource extends KitFile
 
     public function getCustomerCfgDbVersion()
     {
-        return $this->mountCustomerCfgDb()->customer_cfg_db['version'] ?? null;
+        return $this->mountCustomerCfgDb()->customer_cfg_db['version'] ?? $this->customer_cfg_db['registry'] ?? null;
+    }
+
+
+    // -----------管理端-声明式安装动作----------- //
+
+    public function getManageInstall(): array
+    {
+        $install = $this->manage?->install ?? [];
+        if (!is_iterable($install)) {
+            return [];
+        }
+
+        $actions = [];
+        foreach ($install as $item) {
+            if ($item instanceof KitFile) {
+                $item = $item->toArray();
+            }
+            if (!is_array($item)) {
+                continue;
+            }
+
+            $type = $item['type'] ?? null;
+            $from = $item['from'] ?? null;
+            $to = $item['to'] ?? null;
+            if (!is_string($type) || !is_string($from) || !is_string($to)) {
+                continue;
+            }
+            if (!in_array($type, ['copy', 'move'], true) || $from === '' || $to === '') {
+                continue;
+            }
+
+            $actions[] = [
+                'type' => $type,
+                'from' => $from,
+                'to' => $to,
+            ];
+        }
+
+        return $actions;
     }
 
 

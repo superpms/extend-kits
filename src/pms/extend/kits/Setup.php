@@ -25,7 +25,7 @@ class Setup implements LifecycleInterface
 
     protected static function init(): void
     {
-        $kitsDir = path_join(static::$rootPath, BootOptions::get_extend('kts','/kits'));
+        $kitsDir = path_join(static::$rootPath, BootOptions::get_extend('kits','/kits'));
         Path::mount('kitsRoot', $kitsDir);
     }
 
