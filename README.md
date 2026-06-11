@@ -29,7 +29,7 @@ The package declares `extra.pms` in `composer.json`. In a SuperPMS project, the 
 
 ## Documentation
 
-Start with [docs/00-索引.md](docs/00-索引.md).
+Start with [docs/00-index.md](docs/00-index.md).
 
 The docs are organized by domain, module, how-to guide, internal mechanism, and reference material. They are based on the current package code plus server-side usage points under `server/app`, `server/core`, and `server/kits`.
 
