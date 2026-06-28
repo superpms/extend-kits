@@ -6,21 +6,21 @@
 
 ## 先读
 
-1. [domains/01-包职责与边界.md](domains/01-包职责与边界.md)
-2. [internals/01-启动链与安装投影.md](internals/01-启动链与安装投影.md)
-3. [reference/01-kit-json字段参考.md](reference/01-kit-json字段参考.md)
+1. [domains/01-responsibility-boundary.md](domains/01-responsibility-boundary.md)
+2. [internals/01-bootstrap-install-projection.md](internals/01-bootstrap-install-projection.md)
+3. [reference/01-kit-json-fields.md](reference/01-kit-json-fields.md)
 
 ## 按问题读
 
-- 理解启动、目录挂载、autoload 链路：读 [domains/02-生命周期与目录挂载.md](domains/02-生命周期与目录挂载.md) 和 [modules/01-Setup.md](modules/01-Setup.md)。
-- 理解根清单、单 kit 清单、extra 状态：读 [domains/03-套件清单与状态.md](domains/03-套件清单与状态.md)。
-- 理解平台端和租户端配置入口如何消费这个包：读 [domains/04-管理端与租户端配置.md](domains/04-管理端与租户端配置.md)。
-- 理解 `services` 与 action 分发的框架边界：读 [domains/05-服务声明与动作分发.md](domains/05-服务声明与动作分发.md)。
-- 了解怎样让框架发现并加载 kit：读 [how-to/01-让框架发现并加载kit.md](how-to/01-让框架发现并加载kit.md)。
-- 了解框架怎样读取配置页面和安装声明：读 [how-to/02-读取配置页面与安装声明.md](how-to/02-读取配置页面与安装声明.md)。
-- 了解框架怎样读取服务声明并接入 action 分发：读 [how-to/03-读取服务声明与接入动作分发.md](how-to/03-读取服务声明与接入动作分发.md)。
+- 理解启动、目录挂载、autoload 链路：读 [domains/02-lifecycle-mount.md](domains/02-lifecycle-mount.md) 和 [modules/01-Setup.md](modules/01-Setup.md)。
+- 理解根清单、单 kit 清单、extra 状态：读 [domains/03-kit-manifest-status.md](domains/03-kit-manifest-status.md)。
+- 理解平台端和租户端配置入口如何消费这个包：读 [domains/04-admin-tenant-config.md](domains/04-admin-tenant-config.md)。
+- 理解 `services` 与 action 分发的框架边界：读 [domains/05-service-action-dispatch.md](domains/05-service-action-dispatch.md)。
+- 了解怎样让框架发现并加载 kit：读 [how-to/01-load-kit.md](how-to/01-load-kit.md)。
+- 了解框架怎样读取配置页面和安装声明：读 [how-to/02-read-config-install.md](how-to/02-read-config-install.md)。
+- 了解框架怎样读取服务声明并接入 action 分发：读 [how-to/03-read-service-action.md](how-to/03-read-service-action.md)。
 - 查某个类的方法职责：读 `modules/` 下对应文档。
-- 查 server 实际调用点：读 [reference/02-server调用点索引.md](reference/02-server调用点索引.md)。
+- 查 server 实际调用点：读 [reference/02-server-call-sites.md](reference/02-server-call-sites.md)。
 
 ## 目录结构
 
