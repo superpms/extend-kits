@@ -23,9 +23,26 @@
 | `version` | string|null | kit 版本。 |
 | `author` | string|null | 作者。 |
 | `require` | object | kit 依赖声明。 |
-| `services` | object | 服务 provider 元数据。 |
+| `capabilities` | array | 标准能力静态声明，`KitFileSource::getCapabilities()` 读取。 |
+| `services` | object | 待删除旧服务 provider 元数据。 |
 | `system` | bool | 系统套件标记；当前租户卸载接口禁止卸载系统套件。 |
 | `private` | bool | 私有套件标记。 |
+
+## `capabilities` 字段
+
+`capabilities` 用于声明当前 kit 接入的标准能力。`extend-kits` 只读取静态声明，安装态、启用态、配置态、运行态由 server 汇总。
+
+声明项字段：
+
+| 字段 | 类型 | 说明 |
+| --- | --- | --- |
+| `value` | string | 标准能力机器值，必须来自 server 的 `AbilityManagement`。 |
+| `provider` | string | 服务提供方机器值，用于文件存储、打印纸张、支付。 |
+| `provider_label` | string | 服务提供方展示名称。 |
+| `channel` | string | 业务通道机器值，用于 AI 对话、站外消息。 |
+| `channel_label` | string | 业务通道展示名称。 |
+| `adapter_key` | string | 当前 Adapter Service 的机器值。 |
+| `entry` | string | 当前能力业务主入口文件路径。 |
 
 ## `manage` 字段
 
@@ -61,6 +78,6 @@
 
 `KitFileSource` 对输入做保守归一：
 
-- string 字段不是 string 时变成 `null` 或默认空字符串。
+- string 字段不是 string 时变成 `null`，缺省字符串使用默认空字符串。
 - bool 字段只有真实 bool 才保留，否则为 `false`。
 - array 字段不是 array 时变成空数组。

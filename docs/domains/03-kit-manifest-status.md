@@ -21,12 +21,16 @@
 单 kit 清单位于 `server/kits/<vendor>/<name>/kit.json`。包内 `KitFileSource` 会白名单化读取主字段：
 
 - 基础信息：`name`、`icon`、`description`、`remarks`、`version`、`author`
-- 依赖与服务：`require`、`services`
+- 依赖与能力：`require`、`capabilities`
 - 端配置：`manage`、`customer`
 - 安装与发布属性：`system`、`private`
 - 根清单属性：`root`、`registry`、`registry_env`
 
 未知字段不会自动成为 `KitFileSource` 的数据属性，除非后续代码显式写入。
+
+`capabilities` 是标准能力静态声明。它只表达当前 kit 接入了哪个能力，以及该能力下的 provider、channel、adapter key、业务主入口。`extend-kits` 负责读取，不负责判断安装态、启用态、配置态、运行态。
+
+`services` 是旧服务声明字段。完成迁移的 kit 应删除 `services`，防止同一 provider 出现两份声明。
 
 ## `kit.extra.json`
 
@@ -40,7 +44,7 @@
 
 - `scope`: 平台、租户列表、workflow trigger、filesystem、print 等调用点用它判断租户类型可用性。
 
-`getExtra()` 返回的是 `KitFile` 对象或指定 key 的值；数组值会被包装成 `KitFile`，因此 server 代码常见 `$scope->toArray()`。
+`getExtra()` 不传 key 时返回 `KitFile` 对象，传 key 时返回指定值；数组值会被包装成 `KitFile`，因此 server 代码常见 `$scope->toArray()`。
 
 ## 保存行为
 
@@ -48,6 +52,6 @@
 
 注意：
 
-- `save()` 只保存已经被 `mountExtra()` 或管理配置相关方法加载过的数据。
+- `save()` 只保存已经被 `mountExtra()` 与管理配置相关方法加载过的数据。
 - 管理配置文件保存只支持 `json` 和 `php`；读取支持 `json`、`php`、`ini`。
 - `setManageCfgFile()` 只更新配置文件中已经存在的 key。

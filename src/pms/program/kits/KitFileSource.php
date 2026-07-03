@@ -18,6 +18,7 @@ use pms\program\kits\contract\KitNodeManageInterface;
  * @property string                        $author                                                       包作者
  * @property array                         $require                                                      依赖子包
  * @property array                         $services                                                     套件服务声明
+ * @property array                         $capabilities                                                 套件能力声明
  * @property KitNodeManageInterface|null   $manage                                                       配置项-管理端
  * @property KitNodeCustomerInterface|null $customer                                                     配置项-客户端(此项非null时方可允许客户端进行安装/使用)
  * @property bool                          $system                                                       是否为系统套件(系统套件不支持卸载)
@@ -48,6 +49,7 @@ class KitFileSource extends KitFile
         $this->author = static::stringOrNull($info['author'] ?? null);
         $this->require = isset($info['require']) && is_array($info['require']) ? $info['require'] : [];
         $this->services = isset($info['services']) && is_array($info['services']) ? $info['services'] : [];
+        $this->capabilities = isset($info['capabilities']) && is_array($info['capabilities']) ? $info['capabilities'] : [];
 
         $this->manage = null;
         if (array_key_exists('manage', $info)) {
@@ -122,6 +124,28 @@ class KitFileSource extends KitFile
         }
         $service = $services[$key] ?? [];
         return is_array($service) ? $service : [];
+    }
+
+    /**
+     * 获取套件能力声明。
+     */
+    public function getCapabilities(?string $value = null): array
+    {
+        $capabilities = $this->toArray()['capabilities'] ?? [];
+        if (!is_array($capabilities)) {
+            return [];
+        }
+        if ($value === null) {
+            return $capabilities;
+        }
+
+        $matched = [];
+        foreach ($capabilities as $capability) {
+            if (is_array($capability) && ($capability['value'] ?? null) === $value) {
+                $matched[] = $capability;
+            }
+        }
+        return $matched;
     }
 
 

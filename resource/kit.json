@@ -2,6 +2,8 @@
     "name": "kits",
     "description": "pms-套件",
     "registry": "",
+    "capabilities": [
+    ],
     "require": {
     }
 }
