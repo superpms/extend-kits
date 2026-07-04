@@ -2,11 +2,28 @@
 
 namespace pms\helper\kits;
 
+use pms\facade\BootOptions;
 use pms\facade\Path;
 use pms\program\kits\KitFileSource;
 
 class KitsRegistryCenter
 {
+    /**
+     * 确保套件根目录已挂载。
+     * @return void
+     */
+    protected static function ensureKitsRoot(): void
+    {
+        $path = Path::getKitsRoot('kit.json');
+        if (is_string($path) && is_file($path)) {
+            return;
+        }
+        $root = Path::getRoot();
+        if (!is_string($root) || $root === '') {
+            return;
+        }
+        Path::mount('kitsRoot', path_join($root, BootOptions::get_extend('kits', '/kits')));
+    }
 
     public static function gerRegistry(): ?string
     {
@@ -19,6 +36,7 @@ class KitsRegistryCenter
 
     public static function setRegistry(string $registry): bool|int
     {
+        static::ensureKitsRoot();
         $path = Path::getKitsRoot('kit.json');
         if (!is_string($path) || !is_file($path)) {
             return false;
@@ -37,6 +55,7 @@ class KitsRegistryCenter
 
 
     public static function useLocalKitFile(...$paths): ?KitFileSource{
+        static::ensureKitsRoot();
         $path = Path::getKitsRoot(...$paths);
         if (!is_string($path) || !is_file($path)) {
             return null;
