@@ -52,10 +52,6 @@
 - `server/core/adapter/kits/KitsAdapter.php`
   - 声明 `ADAPTER_KITS_ACTION` 和 `ADAPTER_KITS_MESSAGE` 容器。
   - `runAction()` 调用 `AdapterApp::run()`。
-- 代表性 kit action service：
-  - `server/kits/print/feieyun/service/PrintFeieyunActionService.php`
-  - `server/kits/cloudflare/r2/service/CloudflareR2ActionService.php`
-  - `server/kits/superpms/airouter/service/AiRouterActionService.php`
 
 ## 代表性 kit manifest
 

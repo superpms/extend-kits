@@ -39,12 +39,6 @@ public static false|string|array $adapter = 'vendor/name';
 public static string $hookClass = KitsAdapter::class;
 ```
 
-代表性 server 样例：
-
-- `server/kits/print/feieyun/service/PrintFeieyunActionService.php`
-- `server/kits/cloudflare/r2/service/CloudflareR2ActionService.php`
-- `server/kits/superpms/airouter/service/AiRouterActionService.php`
-
 ## 框架边界
 
 - `capabilities` 是静态声明，不是自动服务注册表。
