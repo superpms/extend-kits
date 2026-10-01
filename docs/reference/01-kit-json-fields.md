@@ -25,12 +25,12 @@
 | `require` | object | kit 依赖声明。 |
 | `capabilities` | array | 标准能力静态声明，`KitFileSource::getCapabilities()` 读取。 |
 | `services` | object | 待删除旧服务 provider 元数据。 |
-| `system` | bool | 系统套件标记；当前租户卸载接口禁止卸载系统套件。 |
+| `system` | bool | 系统套件标记。 |
 | `private` | bool | 私有套件标记。 |
 
 ## `capabilities` 字段
 
-`capabilities` 用于声明当前 kit 接入的标准能力。`extend-kits` 只读取静态声明，安装态、启用态、配置态、运行态由 server 汇总。
+`capabilities` 用于声明当前 kit 接入的标准能力。`extend-kits` 只读取静态声明，启用态、配置态、运行态由 server 汇总。
 
 声明项字段：
 
@@ -48,9 +48,7 @@
 
 | 字段 | 类型 | 说明 |
 | --- | --- | --- |
-| `autoinstall` | bool | 管理端自动安装标记。当前包只读取，不执行安装。 |
-| `install` | array | 声明式安装动作列表；当前 `getManageInstall()` 只标准化返回。 |
-| `cfg_sql` | string | 管理端 SQL 文件路径。 |
+| `cfg_sql` | string | 管理端数据库结构 SQL 文件路径。 |
 | `cfg_db` | string | 管理端 DB 配置声明文件路径。 |
 | `cfg_file` | string | 管理端文件配置路径。 |
 | `cfg_pages` | string | 管理端页面配置路径。 |
@@ -59,7 +57,6 @@
 
 | 字段 | 类型 | 说明 |
 | --- | --- | --- |
-| `autoinstall` | bool | 租户端自动启用标记。 |
 | `cfg_db` | string | 租户端 DB 配置声明文件路径。 |
 | `cfg_pages` | string | 租户端页面配置路径。 |
 
@@ -67,7 +64,6 @@
 
 | 字段 | 类型 | 说明 |
 | --- | --- | --- |
-| `installed` | bool | 平台安装态，`isInstall()` 读取，`install()` 写入 true。 |
 | `scope` | array | 当前 server 用来限制租户类型可用性。 |
 
 ## 路径约定

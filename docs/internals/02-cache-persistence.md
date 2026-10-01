@@ -37,7 +37,6 @@
 - 单 kit `kit.json`。
 - `cfg_db` 中声明的数据库配置值。
 - `customer.cfg_db`。
-- `manage.install` 动作。
 
 这些写入由 server 端或其他工具负责。
 

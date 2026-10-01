@@ -20,8 +20,8 @@ use pms\program\kits\contract\KitNodeManageInterface;
  * @property array                         $services                                                     套件服务声明
  * @property array                         $capabilities                                                 套件能力声明
  * @property KitNodeManageInterface|null   $manage                                                       配置项-管理端
- * @property KitNodeCustomerInterface|null $customer                                                     配置项-客户端(此项非null时方可允许客户端进行安装/使用)
- * @property bool                          $system                                                       是否为系统套件(系统套件不支持卸载)
+ * @property KitNodeCustomerInterface|null $customer                                                     配置项-客户端
+ * @property bool                          $system                                                       是否为系统套件
  * @property bool                          $private                                                      是否为私有套件(私有套件不支持更新)
  */
 class KitFileSource extends KitFile
@@ -68,12 +68,6 @@ class KitFileSource extends KitFile
                 if (array_key_exists('cfg_pages', $manage)) {
                     $this->manage['cfg_pages'] = static::stringValue($manage['cfg_pages'] ?? '');
                 }
-                if (array_key_exists('autoinstall', $manage)) {
-                    $this->manage['autoinstall'] = static::boolValue($manage['autoinstall'] ?? false);
-                }
-                if (array_key_exists('install', $manage)) {
-                    $this->manage['install'] = is_array($manage['install']) ? $manage['install'] : [];
-                }
             }
         }
         $this->customer = null;
@@ -81,9 +75,6 @@ class KitFileSource extends KitFile
             $customer = $info['customer'];
             if (is_array($customer)) {
                 $this->customer = [];
-                if (array_key_exists('autoinstall', $customer)) {
-                    $this->customer['autoinstall'] = static::boolValue($customer['autoinstall'] ?? false);
-                }
                 if (array_key_exists('cfg_db', $customer)) {
                     $this->customer['cfg_db'] = static::stringValue($customer['cfg_db'] ?? '');
                 }
@@ -184,17 +175,6 @@ class KitFileSource extends KitFile
         return $this;
     }
 
-    public function isInstall(): bool
-    {
-        return $this->getExtra('installed', false);
-    }
-
-    public function install(): static
-    {
-        $this->setExtra('installed', true);
-        return $this;
-    }
-
     public function save(): bool|int
     {
         $status = [];
@@ -219,7 +199,7 @@ class KitFileSource extends KitFile
     }
 
 
-    // -----------管理端-数据库安装文件----------- //
+    // -----------管理端-数据库结构文件----------- //
 
     protected string|null $manage_cfg_sql_path = '';
 
@@ -324,45 +304,6 @@ class KitFileSource extends KitFile
     public function getCustomerCfgDbVersion()
     {
         return $this->mountCustomerCfgDb()->customer_cfg_db['version'] ?? $this->customer_cfg_db['registry'] ?? null;
-    }
-
-
-    // -----------管理端-声明式安装动作----------- //
-
-    public function getManageInstall(): array
-    {
-        $install = $this->manage?->install ?? [];
-        if (!is_iterable($install)) {
-            return [];
-        }
-
-        $actions = [];
-        foreach ($install as $item) {
-            if ($item instanceof KitFile) {
-                $item = $item->toArray();
-            }
-            if (!is_array($item)) {
-                continue;
-            }
-
-            $type = $item['type'] ?? null;
-            $from = $item['from'] ?? null;
-            $to = $item['to'] ?? null;
-            if (!is_string($type) || !is_string($from) || !is_string($to)) {
-                continue;
-            }
-            if (!in_array($type, ['copy', 'move'], true) || $from === '' || $to === '') {
-                continue;
-            }
-
-            $actions[] = [
-                'type' => $type,
-                'from' => $from,
-                'to' => $to,
-            ];
-        }
-
-        return $actions;
     }
 
 

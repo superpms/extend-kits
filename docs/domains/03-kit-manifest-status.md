@@ -23,12 +23,12 @@
 - 基础信息：`name`、`icon`、`description`、`remarks`、`version`、`author`
 - 依赖与能力：`require`、`capabilities`
 - 端配置：`manage`、`customer`
-- 安装与发布属性：`system`、`private`
+- 套件属性：`system`、`private`
 - 根清单属性：`root`、`registry`、`registry_env`
 
 未知字段不会自动成为 `KitFileSource` 的数据属性，除非后续代码显式写入。
 
-`capabilities` 是标准能力静态声明。它只表达当前 kit 接入了哪个能力，以及该能力下的 provider、channel、adapter key、业务主入口。`extend-kits` 负责读取，不负责判断安装态、启用态、配置态、运行态。
+`capabilities` 是标准能力静态声明。它只表达当前 kit 接入了哪个能力，以及该能力下的 provider、channel、adapter key、业务主入口。`extend-kits` 负责读取，不负责判断启用态、配置态、运行态。
 
 `services` 是旧服务声明字段。完成迁移的 kit 应删除 `services`，防止同一 provider 出现两份声明。
 
@@ -36,13 +36,7 @@
 
 `kit.extra.json` 是运行态可写状态文件，位于 `server/kits/<vendor>/<name>/kit.extra.json`。
 
-当前包内明确语义化的字段：
-
-- `installed`: `KitFileSource::isInstall()` 读取它，`install()` 把它设为 `true`。
-
-当前 server 侧还消费：
-
-- `scope`: 平台、租户列表、workflow trigger、filesystem、print 等调用点用它判断租户类型可用性。
+server 使用 `scope` 表达当前套件允许访问的租户类型。
 
 `getExtra()` 不传 key 时返回 `KitFile` 对象，传 key 时返回指定值；数组值会被包装成 `KitFile`，因此 server 代码常见 `$scope->toArray()`。
 

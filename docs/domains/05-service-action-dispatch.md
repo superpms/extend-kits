@@ -2,7 +2,7 @@
 
 `kit.json.capabilities` 是标准能力静态声明。`extend-kits` 只提供读取能力，不定义所有能力字段的业务语义，也不承担业务调度。
 
-action 页面和 provider 声明是框架接入能力，不是独立套件类型。实际业务套件应该如何组织 service、business、model、hrb、workflow、command 等目录，读 `server/docs/specification/`。
+action 页面和 provider 声明是框架接入能力，不是独立套件类型。实际业务套件应该如何组织 service、business、model、hrb、workflow、command 等目录，读 `APM server《套件声明、配置与访问边界》《标准能力、Provider 与运行时调度》`。
 
 ## 读取能力声明
 

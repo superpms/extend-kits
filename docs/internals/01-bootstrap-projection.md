@@ -1,4 +1,4 @@
-# 启动链与安装投影
+# Composer 接入与启动链
 
 本页解释 composer 安装期和框架启动期两条链路。
 
@@ -52,12 +52,6 @@ autoload 文件只在 `LifecycleHook` 存在时挂载 `Setup`。真正路径挂�
 - `Path::getKitsRoot('kit.json')` 对应 `server/kits/kit.json`。
 - `Path::getKitsRoot('print/feieyun', 'autoload.php')` 对应 `server/kits/print/feieyun/autoload.php`。
 
-## 自动加载不等于安装
+## 套件加载与使用
 
-被根清单 require 后，kit 的 `define.php` 和 `autoload.php` 会参与启动加载。但平台安装态仍由 `kit.extra.json.installed` 表示，租户安装态仍由 server 端 `SystemKits` 表示。
-
-所以：
-
-- 启动加载：决定代码是否进入运行时。
-- 平台安装：决定平台是否把 kit 视为 installed。
-- 租户安装或 autoinstall：决定租户侧是否 active 或 usable。
+根清单 require 登记的 kit 参与启动加载。宿主读取配置和执行业务时，按本地套件声明、授权范围、设备及配置完整性判断可用性。

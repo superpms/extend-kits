@@ -17,7 +17,7 @@ public function __construct(array $info, string $path = '')
 数组字段通过 `KitFile::get()` 包装成 `KitFile`，所以可以写：
 
 ```php
-$kit->customer?->autoinstall
+$kit->customer?->cfg_pages
 $kit->manage?->cfg_pages
 $kit->getExtra('scope', [])->toArray()
 ```
@@ -26,8 +26,6 @@ $kit->getExtra('scope', [])->toArray()
 
 - `getExtra()` 懒加载 `<kit>/kit.extra.json`。
 - `setExtra()` 修改内存中的 extra。
-- `isInstall()` 读取 `extra.installed`。
-- `install()` 设置 `extra.installed=true`。
 - `save()` 写回已加载的 extra。
 
 ## 管理端配置
@@ -38,9 +36,6 @@ $kit->getExtra('scope', [])->toArray()
 - DB 配置: `getManageCfgDbPath()`、`getManageCfgDb()`、`getManageCfgDbVersion()`
 - 页面配置: `getManageCfgPagesPath()`、`getManageCfgPages()`
 - 文件配置: `getManageCfgFilePath()`、`getManageCfgFile()`、`setManageCfgFile()`
-- 声明式安装动作: `getManageInstall()`
-
-`getManageInstall()` 只保留 `type` 为 `copy` 或 `move`，且 `from`、`to` 都是非空字符串的动作。
 
 ## 租户端配置
 

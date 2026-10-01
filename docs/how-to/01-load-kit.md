@@ -1,6 +1,6 @@
 # 让框架发现并加载 kit
 
-本文只说明 `extend-kits` 框架发现、加载 kit 所需的最小声明。它不是 server 业务套件开发规范；实际业务套件的目录职责、内部实现、server 调用契约和返回规范，读 `server/docs/specification/`。
+本文只说明 `extend-kits` 框架发现、加载 kit 所需的最小声明。它不是 server 业务套件开发规范；实际业务套件的目录职责、内部实现、server 调用契约和返回规范，读 `APM server《套件声明、配置与访问边界》《标准能力、Provider 与运行时调度》`。
 
 ## 目录
 
@@ -75,7 +75,7 @@ server/kits/<vendor>/<name>/autoload.php
 
 ## 框架可读的运行态文件
 
-如需记录平台安装态、授权范围或其他运行态状态，创建或由接口写入：
+授权范围由对应管理接口写入：
 
 ```text
 server/kits/<vendor>/<name>/kit.extra.json
@@ -85,11 +85,10 @@ server/kits/<vendor>/<name>/kit.extra.json
 
 ```json
 {
-  "installed": false,
   "scope": []
 }
 ```
 
-`installed` 由平台 install 流程使用；`scope` 当前由租户列表、服务 connector 和 workflow trigger 等 server 调用点读取。
+`scope` 由 server 的租户列表及对应能力消费方读取。
 
 这些字段能被框架读取，并不代表业务能力已经完成。具体套件还必须满足对应 server 业务能力规范。

@@ -1,63 +1,9 @@
 # server 调用点索引
 
-本页列出当前 server 中直接消费 `extend-kits` API 的关键调用点，供修改包行为前回查影响面。
+套件管理入口位于 app/system/tenant/http/kits：GetManifest 枚举根清单登记的本地套件，GetConfig、SaveConfig 读取和保存对应模式的配置，GetAssets 交付白名单 UI 资源。平台授权范围由 app/system/platform/http/kits/SaveExtra.php 写入 extra.scope。
 
-## 平台端 kits 接口
+core/system/kits/ClientKitConfig.php 聚合 services.client_config 声明的公开配置，并按租户范围和配置完整性输出状态。
 
-- `server/app/system/platform/http/kits/GetListByManage.php`
-  - 读取 `KitsRegistryCenter::localList()`。
-  - 使用 `isInstall()`、`getManageCfgPages()`、`getExtra()`。
-- `server/app/system/platform/http/kits/GerRegistryInfo.php`
-  - 读取 `KitsRegistryCenter::gerRegistry()`。
-- `server/app/system/platform/http/kits/extra/Save.php`
-  - 写入 `setExtra()` 并 `save()`。
-  - `scope` 只能写给存在 `customer` 节点的 kit。
-- `server/app/system/platform/http/kits/manage/Install.php`
-  - 使用 `getManageCfgSqlPath()`、`getManageCfgDbPath()`、`getManageCfgDb()`、`install()`、`save()`。
-- `server/app/system/platform/http/kits/manage/config/GetByKit.php`
-  - 使用 `getManageCfgDb()`、`getManageCfgFile()`.
-- `server/app/system/platform/http/kits/manage/config/SaveByKit.php`
-  - 使用 `getManageCfgFilePath()`、`setManageCfgFile()`、`getManageCfgDbPath()`、`getManageCfgDb()`。
-- `server/app/system/platform/http/kits/manage/Action.php`
-  - 使用 `getManageCfgPages()`。
-  - 通过 `KitsAdapter::runAction()` 分发 action。
+core/system/abilities/AbilityAction.php 返回标准能力和设备匹配的套件渠道；GetListByAbility 输出配置就绪状态。各 Adapter 和 Provider 使用本地声明、业务开关、授权范围和配置校验完成调度。
 
-## 租户端 kits 接口
-
-- `server/app/system/tenant/http/kits/GetListByCustomer.php`
-  - 使用 `localList()`、`isInstall()`、`getExtra('scope')`、`getCustomerCfgPages()`、`customer.autoinstall`。
-- `server/app/system/tenant/http/kits/customer/Install.php`
-  - 使用 `getExtra('scope')`、`getCustomerCfgDbPath()`、`getCustomerCfgDb()`。
-- `server/app/system/tenant/http/kits/customer/Uninstall.php`
-  - 使用 `useLocalKit()`、`system`、`localList()`、`getCustomerCfgDb()`。
-- `server/app/system/tenant/http/kits/customer/config/GetByKit.php`
-  - 使用 `customer`、`getCustomerCfgDb()`。
-- `server/app/system/tenant/http/kits/customer/config/SaveByKit.php`
-  - 使用 `getExtra('scope')`、`getCustomerCfgDbPath()`、`getCustomerCfgDb()`。
-- `server/app/system/tenant/http/kits/customer/Action.php`
-  - 使用 `getExtra('scope')`、`getCustomerCfgPages()`。
-  - 通过 `KitsAdapter::runAction()` 分发 action。
-
-## Connector 与查询
-
-- `server/app/workflow/basic/query/TriggerReadQuery.php`
-  - 使用 `localList()`、`isInstall()`、`getExtra('scope')`、`customer.autoinstall`、`SystemKits` 判断 kit trigger 是否可用于租户。
-- `server/app/system/tenant/basic/connector/print/client/PrintServiceClient.php`
-  - 读取 `services.print`，并结合 installed、scope、customer install 状态判断 provider 可用性。
-- `server/app/system/tenant/basic/connector/filesystem/client/SystemFileServiceClient.php`
-  - 读取 `services.filesystem`，并结合 installed、scope、customer install 状态判断 provider 可用性。
-
-## Action Adapter
-
-- `server/core/adapter/kits/KitsAdapter.php`
-  - 声明 `ADAPTER_KITS_ACTION` 和 `ADAPTER_KITS_MESSAGE` 容器。
-  - `runAction()` 调用 `AdapterApp::run()`。
-
-## 代表性 kit manifest
-
-- `server/kits/kit.json`: 根清单。
-- `server/kits/print/feieyun/kit.json`: `services.print`、`manage`、`customer`。
-- `server/kits/superpms/localfilesystem/kit.json`: `services.filesystem`、管理配置。
-- `server/kits/cloudflare/r2/kit.json`: filesystem provider 和配置检查 action。
-- `server/kits/superpms/mailer/kit.json`: `services.trigger.triggers`。
-- `server/kits/superpms/login/kit.json`: `manage.install` 与 `cfg_file` 样例。
+管理、配置与访问边界见 APM server《套件声明、配置与访问边界》，能力消费见《标准能力、Provider 与运行时调度》。

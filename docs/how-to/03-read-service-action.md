@@ -2,7 +2,7 @@
 
 本文说明 `extend-kits` 如何让 `services` 元数据可读，以及当前 server 如何把页面 action 分发到 kit 内 service。它描述的是框架能力和接入点，不是把 provider 或 action 页面定义成独立套件类型。
 
-实际 provider 的目录结构、内部职责、业务校验、返回结构，读 `server/docs/specification/` 中对应业务能力规范。
+实际 provider 的目录结构、内部职责、业务校验、返回结构，读 `APM server《套件声明、配置与访问边界》《标准能力、Provider 与运行时调度》` 中对应业务能力规范。
 
 ## 可读取的服务 provider 元数据
 
@@ -71,6 +71,5 @@ public static function entry(
 服务 connector 通常会同时检查：
 
 - kit 已进入根清单。
-- `kit.extra.json.installed` 为 true。
 - `kit.extra.json.scope` 允许当前租户类型。
-- 如果是租户侧能力，结合 `customer.autoinstall` 或 `SystemKits` 判断当前租户是否可用。
+- 当前能力的设备、配置及业务权限满足实际消费入口要求。
