@@ -82,20 +82,6 @@ class KitsHttpRoute extends HttpRoute implements HttpEntrypointInterface
     }
 
     /**
-     * 生成使用当前套件挂载前缀的外部路径。
-     * @param string $pathinfo 终端、套件节点及内部接口路径
-     * @return string 外部路径
-     */
-    public static function withPrefix(string $pathinfo): string
-    {
-        $prefix = static::prefixes()[0];
-        $pathinfo = '/' . ltrim($pathinfo, '/');
-        return HttpEntrypointHook::relativePath($pathinfo, $prefix) === null
-            ? $prefix . $pathinfo
-            : $pathinfo;
-    }
-
-    /**
      * 获取套件接口使用的 HTTP 配置目录。
      * @return list<string> HTTP 全局、宿主套件配置和套件配置目录
      */
