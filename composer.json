@@ -26,6 +26,9 @@
     },
     "extra": {
         "pms": {
+            "config": {
+                "kits": "resource/config.php"
+            },
             "dir": [
                 "/kits"
             ],

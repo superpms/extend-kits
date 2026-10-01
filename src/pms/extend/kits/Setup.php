@@ -6,6 +6,7 @@ use pms\contract\LifecycleInterface;
 use pms\facade\BootOptions;
 use pms\facade\Path;
 use pms\helper\kits\KitsRegistryCenter;
+use pms\hook\HttpEntrypointHook;
 
 class Setup implements LifecycleInterface
 {
@@ -16,6 +17,9 @@ class Setup implements LifecycleInterface
 	{
         static::$rootPath = $rootPath;
         static::init();
+        if (class_exists(HttpEntrypointHook::class)) {
+            HttpEntrypointHook::mount(KitsHttpRoute::class);
+        }
 
         /**
          * 加载插件autoload文件
